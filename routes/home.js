@@ -1,13 +1,16 @@
 const { Router } = require('express')
-const passport = require('passport')
 const { google } = require('googleapis')
-const KEYS = require('../configs/keys')
-
+const page = require('../service/pdf')
+const hbs = require('hbs');
+const fs = require('fs');
+const pdf = require('html-pdf');
+const showdown = require('showdown');
+const converter = new showdown.Converter();
 
 const router = Router()
 
 router.get('/', function (req, res) {
-    res.render('index.html')
+    res.render('index.hbs')
 })
 
 router.get('/editor', function (req, res) {
@@ -32,8 +35,30 @@ router.get('/editor', function (req, res) {
             else if (req.query.file == "notupload") parseData.file = "notuploaded"
         }
 
-        res.render('editor.html', parseData)
+        res.render('editor.hbs', parseData)
+        
     }
+})
+
+
+router.post('/generate', (req, res) => {
+    var data = req.body
+    var webpage = page.pdfBody(data)
+    //setting options for PDF
+  var options = { format: 'A4' };
+
+  //Reads the Base Template from the Views Folder
+  var template = hbs.compile(fs.readFileSync('./views/gen.hbs', 'utf8'));
+  //Proccessing the base template with the content
+  var html = template({content:webpage})
+  var filename = `${data.firstname}${data.lastname}${new Date().toLocaleDateString()}`;
+  //create PDF from the above generated html
+  pdf.create(html, options).toFile(`./public/${filename}.pdf`, function (err, resp) {
+   if(resp) return res.json({filename:filename+".pdf"})
+    if (err) return console.log(err);
+    console.log(res)
+  });
+
 })
 
 router.post('/upload', function (req, res) {

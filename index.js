@@ -7,6 +7,10 @@ const cookieSession = require('cookie-session')
 const KEYS = require('./configs/keys')
 const nunjucks = require('nunjucks')
 const fileUpload = require('express-fileupload')
+const hbs = require('hbs');
+const bodyParser = require('body-parser')
+var cors = require('cors')
+
 
 // init app
 let app = express()
@@ -19,7 +23,10 @@ nunjucks.configure('views', {
     express: app
 });
 
-// init static
+// init middlewares
+app.set('view engine', 'hbs')
+app.use(cors())
+app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'))
 
 
