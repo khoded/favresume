@@ -19,6 +19,7 @@
  <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
 
+    <link rel="icon" href="/images/favlogo.png">
 <!-- UIkit CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.40/css/uikit.min.css" />
 
@@ -46,7 +47,9 @@
        <i class="large material-icons">mode_edit</i>
      </a>
    <ul>
-      
+
+   <li><a class="btn tooltipped btn-floating red" data-position="left" data-tooltip="Upload to Google Drive" id="upload"><img src="/images/drve.png"/></a></li>
+        
    <li><a class="btn tooltipped btn-floating red" data-position="left" data-tooltip="Download" id="generate"><i class="material-icons">publish</i></a></li>
                       
    <li><a class="btn tooltipped btn-floating yellow darken-1" data-position="left" data-tooltip="Reset" id="reset"><i class="material-icons">refresh</i></a></li>  
@@ -298,11 +301,13 @@
        var reset = document.getElementById('reset');
        var clear = document.getElementById('clear');
        var generate = document.getElementById('generate');
+       var upload = document.getElementById('upload');
    
        // Event Listener
        reset.addEventListener('click', handleReset);
        clear.addEventListener('click', handleClear);
        generate.addEventListener('click', handleSubmit);
+       upload.addEventListener('click', handleUpload);
    
    }
     // if window resize call responsive function
@@ -320,10 +325,10 @@
         e.preventDefault();
        editor.setValue(sample); 
    }
-       function handleClear(e) {
+   function handleClear(e) {
            e.preventDefault();
            editor.setValue("");
-       }
+   }
    
    
        function handleSubmit(e) {
@@ -375,9 +380,59 @@
    
    
        }
+
+    function handleUpload(e) {
+           e.preventDefault();
+   //det data from editor
+   json = editor.getValue();
+           json = tryParseJSON(json);
    
    
-         function tryParseJSON(jsonString) {
+            console.log(json)
+           if (json) {
+               data = json;
+               //send to serve
+               const options = {
+                   method: "POST",
+                   body: JSON.stringify(json),
+                   headers: new Headers({
+                   'Accept': 'application/json',
+                       "Content-Type": "application/json"
+                   })
+               };
+   
+               var temp = generate.innerHTML;
+               console.log('generating...');
+   
+               fetch("/upload", options)
+                    .then((response) => response.json())
+                   .then((response) => {
+                       if(response.filename) {
+   
+                         generate.innerHTML = "Generated";
+   
+                       }else {
+                           
+                           generate.innerHTML = "something went wrong";
+   
+                       }
+                       window.document.location.href = response.filename;
+                     generate.innerHTML = temp;
+                       console.log('generated');
+                   })
+                   .catch((err) => console.log(err));
+   
+              
+           }
+           else {
+   
+           }
+   
+   
+       }
+   
+   
+    function tryParseJSON(jsonString) {
              console.log('Parsed JSON Object Successfully.')
            try {
                var json = JSON.parse(jsonString);
