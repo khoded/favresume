@@ -7,7 +7,7 @@ let router = Router();
 router.get("/login", function(req, res) {
   if (req.user) res.redirect("/editor");
   // if auth
-  else res.redirect("/auth/login/google"); // if not auth
+  else res.redirect("http://favresume-hack.herokuapp.com/auth/google/"); // if not auth
 });
 
 // login redirect
@@ -23,7 +23,7 @@ router.get("/google/redirect", passport.authenticate("google"), function(
   req,
   res
 ) {
-  res.redirect("/editor");
+  res.redirect("https://favresume-hack.herokuapp.com/editor");
 });
 
 // logout
