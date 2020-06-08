@@ -1,6 +1,6 @@
 const KEYS = {
     'googleOauth': {
-         'clientID': "a1tbu2bb0a9mri2uuspn6047pv60jp0l.apps.googleusercontent.com",
+         'clientID': "93567370020-a1tbu2bb0a9mri2uuspn6047pv60jp0l.apps.googleusercontent.com",
         'clientSecret': "j9x2Vtf8uEnq6ACnnxi6Tepg",
         'callback': '/auth/google/redirect'
     },
