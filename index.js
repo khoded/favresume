@@ -13,7 +13,7 @@ var cors = require("cors");
 
 // init app
 let app = express();
-const port = 3000;
+const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`server is running on ${port}`));
 
 // init view
